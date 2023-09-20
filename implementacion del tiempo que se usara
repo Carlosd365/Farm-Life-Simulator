@@ -1,0 +1,63 @@
+import random
+import time
+import threading
+
+
+class Tiempo:
+    def __init__(self):
+        self.segundos = 0
+        self.minutos = 0
+        self.horas = 6
+        self.dias = 1
+
+    def seguir_tiempo(self):
+        while True:
+            time.sleep(1)
+            self.segundos += 1
+
+            if self.segundos == 10:
+                self.minutos += 1
+                self.segundos = 0
+
+            if self.minutos == 60:
+                self.horas += 1
+                self.minutos = 0
+
+            if self.horas == 24:
+                self.dias += 1
+                self.horas = 6
+
+tiempo = Tiempo()
+hilo_tiempo = threading.Thread(target=tiempo.seguir_tiempo)
+hilo_tiempo.start()
+
+
+while True:
+    print("")
+    print("t: parea mostrar el tiempo")
+    print("d: para dormir")
+
+    opciones = input("elija una opcion:")
+
+    if opciones == 't':
+        print(f"Días: {tiempo.dias}, Horas: {tiempo.horas}, Minutos: {tiempo.minutos}")
+
+
+    elif opciones == 'd':
+        print("El jugador va a dormir:")
+
+        tiempo.segundos = 0
+        tiempo.minutos = 0
+        tiempo.horas = 6
+        tiempo.dias += 1
+
+    elif tiempo.horas == 22:
+        print("Ya es muy tarde, comienzas a tener mucho sueño:")
+
+        tiempo.segundos = 0
+        tiempo.minutos = 0
+        tiempo.horas = 6
+        tiempo.dias += 1
+
+
+
