@@ -1,3 +1,5 @@
+import random
+
 class Tiempo:
     def __init__(self):
         self.accion = 0
@@ -14,8 +16,20 @@ class Tiempo:
 tiempo = Tiempo()
 
 class Cultivos:
-    pass
+    def __init__(self, nombre, tiempo_brote, tiempo_crecimiento, tiempo_maduracion, productos):
+        self.nombre = nombre
+        self.tiempo_brote = tiempo_brote
+        self.tiempo_crecimiento = tiempo_crecimiento
+        self.tiempo_maduracion = tiempo_maduracion
+        self.etapa = 'Brote'
+        self.productos = productos
+        self.rendimiento = random.randint(1, 10)
 
+manzanas = Cultivos('Manzana', 2, 5, 9, 'manzanas')
+trigo = Cultivos('Trigo', 1, 4, 6, 'grano de trigo')
+papas = Cultivos('Papa', 3, 5, 7, 'papas')
+fresas = Cultivos('Fresa', 1, 3, 5, 'fresas')
+zanahorias = Cultivos('Zanahoria', 2, 4, 7, 'zanahorias')
 
 
 class TerrenoCultivo:
