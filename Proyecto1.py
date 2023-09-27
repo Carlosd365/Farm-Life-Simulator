@@ -25,6 +25,18 @@ class Cultivos:
         self.productos = productos
         self.rendimiento = random.randint(1, 10)
 
+    def crecer(self, tiempo):
+        if self.etapa == 'Brote' and tiempo.dias >= self.tiempo_brote:
+            self.etapa = 'Crecimiento'
+        elif self.etapa == 'Crecimiento' and tiempo.dias >= self.tiempo_crecimiento:
+            self.etapa = 'Maduración'
+        elif self.etapa == 'Maduración' and tiempo.dias >= self.tiempo_maduracion:
+            self.etapa = 'Cosecha'
+
+    def cosechar(self):
+        cantidad_productos = self.rendimiento
+        return cantidad_productos
+
 manzanas = Cultivos('Manzana', 2, 5, 9, 'manzanas')
 trigo = Cultivos('Trigo', 1, 4, 6, 'grano de trigo')
 papas = Cultivos('Papa', 3, 5, 7, 'papas')
@@ -46,7 +58,10 @@ class TerrenoCultivo:
 
     def cosechar_cultivo(self, fila, columna):
         if 0 <= fila < self.filas and 0 <= columna < self.columnas:
-            if self.terreno[fila][columna] != '-':
+            cultivo = self.terreno[fila][columna]
+            if cultivo != '-':
+                cantidad_productos = cultivo.cosechar()
+                print(f'Se han cosechado {cantidad_productos} productos de {cultivo.nombre}')
                 self.terreno[fila][columna] = '-'
             else:
                 print('No hay cultivo para cosechar en esta parcela.')
@@ -56,7 +71,7 @@ class TerrenoCultivo:
     def mostrar_terreno(self):
         for i in self.terreno:
             print('+----' * self.columnas + '+')
-            print('| ' + '  | '.join(i) + '  |')
+            print('| ' + '  | '.join(cultivo.nombre[0] if isinstance(cultivo, Cultivos) else str(cultivo) for cultivo in i) + '  |')
         print('+----' * self.columnas + '+')
 
 terreno = TerrenoCultivo(3, 3)
@@ -80,13 +95,13 @@ r = True
 while r:
     print("")
     print("0. Ver Cultivos")
-    print("1: mostrar el tiempo")
-    print("2: dormir")
-    print("3: accion")
+    print("1: Mostrar el tiempo")
+    print("2: Dormir")
+    print("3: Accion")
     print("4: Mejoras")
-    print("5: salir")
+    print("5: Salir")
 
-    opciones = input("elija una opcion:")
+    opciones = input("Elija una opcion: ")
 
     if opciones == '0':
         print("")
@@ -94,12 +109,33 @@ while r:
         print("2. Cosechar cultivo")
         print("3. Mostrar terreno")
 
-        opcio = input("elija una opcion")
+        opcio = input("Elija una opcion: ")
 
         if opcio == '1':
-            fila = int(input('Ingrese la fila para sembrar')) - 1
-            columna = int(input('Ingrese la columna para sembrar')) - 1
-            cultivo = input("Ingrese el tipo de cultivo: ")
+            fila = int(input('Ingrese la fila para sembrar: ')) - 1
+            columna = int(input('Ingrese la columna para sembrar: ')) - 1
+            print('Seleccione el tipo de cultivo')
+            print('1. Manzanas')
+            print('2. Trigo')
+            print('3. Papas')
+            print('4. Fresas')
+            print('5. Zanahorias')
+            cultivo_opcion = input('Ingrese el número correspondiente al cultivo: ')
+
+            if cultivo_opcion == '1':
+                cultivo = manzanas
+            elif cultivo_opcion == '2':
+                cultivo = trigo
+            elif cultivo_opcion == '3':
+                cultivo = papas
+            elif cultivo_opcion == '4':
+                cultivo = fresas
+            elif cultivo_opcion == '5':
+                cultivo = zanahorias
+            else:
+                print('Opción no válida. Intente de nuevo.')
+                continue
+
             terreno.sembrar_cultivo(fila, columna, cultivo)
 
         elif opcio == '2':
@@ -112,7 +148,7 @@ while r:
         else:
             print('Opción no válida. Intente de nuevo.')
 
-    if opciones == '1':
+    elif opciones == '1':
         tiempo.seguir_tiempo()
         print(f"Días: {tiempo.dias}, Accion: {tiempo.accion}")
 
@@ -186,4 +222,4 @@ while r:
         r = False
 
     else:
-        print("Elija optra opcion opcion")
+        print("Elija otra opcion")
