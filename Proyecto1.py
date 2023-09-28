@@ -23,7 +23,7 @@ class Cultivos:
         self.tiempo_maduracion = tiempo_maduracion
         self.etapa = 'Brote'
         self.productos = productos
-        self.rendimiento = random.randint(1, 10)
+        self.rendimiento = random.randint(1, 5)
 
     def crecer(self, tiempo):
         if self.etapa == 'Brote' and tiempo.dias >= self.tiempo_brote:
