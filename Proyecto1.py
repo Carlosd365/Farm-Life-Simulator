@@ -138,7 +138,7 @@ class Mejoras:
 
 r = True
 while r:
-    print("Menu principal")
+    print("---Menu principal---")
     print("1. Ver Cultivos")
     print("2. Mostrar el tiempo")
     print("3. Dormir")
