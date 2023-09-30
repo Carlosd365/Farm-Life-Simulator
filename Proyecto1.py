@@ -1,4 +1,5 @@
 import random
+
 class CantidadItems:
     def __init__(self, oro):
         self.oro = oro
@@ -183,25 +184,28 @@ class Cultivos:
         self.etapa = 'Brote'
         self.productos = productos
         self.rendimiento = random.randint(1, 5)
-
-    def crecer(self, tiempo):
-        if self.etapa == 'Brote' and tiempo.dias >= self.tiempo_brote:
+        self.dias_transcurridos = 0
+        self.regado = False
+        self.plagas = False        
+    
+    def crecer(self):
+        if self.etapa == 'Brote' and self.regado and self.dias_transcurridos >= self.tiempo_brote:
             self.etapa = 'Crecimiento'
-        elif self.etapa == 'Crecimiento' and tiempo.dias >= self.tiempo_crecimiento:
+        elif self.etapa == 'Crecimiento' and self.dias_transcurridos >= self.tiempo_brote + self.tiempo_crecimiento:
             self.etapa = 'Maduración'
-        elif self.etapa == 'Maduración' and tiempo.dias >= self.tiempo_maduracion:
+        elif self.etapa == 'Maduración' and self.dias_transcurridos >= self.tiempo_brote + self.tiempo_crecimiento + self.tiempo_maduracion:
             self.etapa = 'Cosecha'
-
+        self.dias_transcurridos += 1
+        
     def cosechar(self):
         cantidad_productos = self.rendimiento
         return cantidad_productos
 
-manzanas = Cultivos('Manzana', 2, 5, 9, 'manzanas')
-trigo = Cultivos('Trigo', 1, 4, 6, 'grano de trigo')
-papas = Cultivos('Papa', 3, 5, 7, 'papas')
-fresas = Cultivos('Fresa', 1, 3, 5, 'fresas')
-zanahorias = Cultivos('Zanahoria', 2, 4, 7, 'zanahorias')
-
+manzanas = Cultivos('Manzana', 2, 3, 4, 'manzanas')
+trigo = Cultivos('Trigo', 1, 3, 2, 'grano de trigo')
+papas = Cultivos('Papa', 3, 2, 2, 'papas')
+fresas = Cultivos('Fresa', 1, 2, 3, 'fresas')
+zanahorias = Cultivos('Zanahoria', 2, 2, 3, 'zanahorias')
 
 class TerrenoCultivo:
     def __init__(self, filas, columnas, inventario_jugador):
@@ -212,29 +216,88 @@ class TerrenoCultivo:
 
     def sembrar_cultivo(self, fila, columna, cultivo):
         if 0 <= fila < self.filas and 0 <= columna < self.columnas:
-            self.terreno[fila][columna] = cultivo
+            if isinstance(self.terreno[fila][columna], Cultivos):
+                print('Ya hay un cultivo en esta parcela.')
+            else:
+                nuevo_cultivo = Cultivos(cultivo.nombre, cultivo.tiempo_brote, cultivo.tiempo_crecimiento, cultivo.tiempo_maduracion, cultivo.productos)
+                nuevo_cultivo.plagas = random.random() < 0.3
+                self.terreno[fila][columna] = nuevo_cultivo
+                print(f'Se ha sembrado {nuevo_cultivo.nombre} en la parcela {fila+1},{columna+1}.')
         else:
             print("Ubicación no válida")
+
+    def regar(self, fila, columna):
+        if 0 <= fila < self.filas and 0 <= columna < self.columnas:
+            cultivo = self.terreno[fila][columna]
+            if isinstance(cultivo, Cultivos) and cultivo.etapa == 'Brote':
+                if not cultivo.regado:
+                    cultivo.regado = True
+                    cultivo.crecer()
+                    print(f'Se ha regado y comenzado el crecimiento del cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+                else:
+                    print(f'El cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1} ya ha sido regado en la etapa de "Brote".')
+            else:
+                print(f'No se puede regar el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+        else:
+            print('Ubicación no válida.')
+
+    def tratar_plagas_cultivo(self, fila, columna):
+        if 0 <= fila < self.filas and 0 <= columna < self.columnas:
+            cultivo = self.terreno[fila][columna]
+            if isinstance(cultivo, Cultivos):
+                if cultivo.plagas:
+                    cultivo.plagas = False
+                    print(f'Se han tratado las plagas en el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+                else:
+                    print(f'El cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1} no tiene plagas.')
+            else:
+                print('No hay cultivo en esta parcela.')
+        else:
+            print('Ubicación no válida.')
 
     def cosechar_cultivo(self, fila, columna):
         if 0 <= fila < self.filas and 0 <= columna < self.columnas:
             cultivo = self.terreno[fila][columna]
             if cultivo != '-':
-                cantidad_productos = cultivo.cosechar()
-                if isinstance(cultivo, Cultivos):
-
+                if cultivo.etapa == 'Cosecha':
+                    cantidad_productos = cultivo.cosechar()
                     self.inventario_jugador.agregar_frutos(cultivo.nombre, cantidad_productos)
-                self.terreno[fila][columna] = '-'
+                    print(f'Se han cosechado {cantidad_productos} productos de {cultivo.nombre} en la parcela {fila+1},{columna+1}')
+                    self.terreno[fila][columna] = '-'
+                else:
+                    print('El cultivo no está listo para ser cosechado.')
             else:
                 print('No hay cultivo para cosechar en esta parcela.')
         else:
             print('Ubicación no válida')
 
     def mostrar_terreno(self):
+        emojis = {
+            'Manzana': '🍎',
+            'Trigo': '🌾',
+            'Papa': '🥔',
+            'Fresa': '🍓',
+            'Zanahoria': '🥕'
+        }
         for i in self.terreno:
             print('+----' * self.columnas + '+')
-            print('| ' + '  | '.join(cultivo.nombre[0] if isinstance(cultivo, Cultivos) else str(cultivo) for cultivo in i) + '  |')
+            print('| ' + '  | '.join(emojis[cultivo.nombre] if isinstance(cultivo, Cultivos) else str(cultivo) for cultivo in i) + '  |')
         print('+----' * self.columnas + '+')
+
+        cuadrícula_llena = False
+
+        print("Listado de cultivos:")
+        for fila in range(self.filas):
+            for columna in range(self.columnas):
+                cultivo = self.terreno[fila][columna]
+                if isinstance(cultivo, Cultivos):
+                    estado_regado = "Regado" if cultivo.regado else "No Regado"
+                    plagas_info = "con plagas" if cultivo.plagas else "sin plagas"
+                    print(f'Fila: {fila + 1}, Columna: {columna + 1} | Cultivo: {cultivo.nombre} | Etapa: {cultivo.etapa} | Estado: {estado_regado} | Plagas: {plagas_info}')
+                    cuadrícula_llena = True
+
+        if not cuadrícula_llena:
+            print("No hay cultivos sembrados.")
 
 terreno = TerrenoCultivo(3, 3,inventario_jugador)
 
@@ -257,30 +320,29 @@ r = True
 while r:
     print("")
     print("0. Ver Cultivos")
-    print("1: Mostrar el tiempo")
-    print("2: Dormir")
-    print("3: Tienda")
-    print("4: Mejoras")
-    print("5: Inventario")
-    print("6: Salir")
-
+    print("1. Mostrar el tiempo")
+    print("2. Dormir")
+    print("3. Tienda")
+    print("4. Mejoras")
+    print("5. Inventario")
+    print("6. Salir")
+    
     opciones = input("Elija una opcion: ")
 
     if opciones == '0':
         print("")
         print('1. Sembrar cultivo')
-        print("2. Cosechar cultivo")
-        print("3. Mostrar terreno")
-
-        tiempo.accionN()
-        tiempo.seguir_tiempo()
-
+        print("2. Regar cultivo")
+        print("3. Tratar Cultivo")
+        print("4. Cosechar cultivo")
+        print("5. Mostrar terreno")
 
         opcio = input("Elija una opcion: ")
 
         if opcio == '1':
             fila = int(input('Ingrese la fila para sembrar: ')) - 1
             columna = int(input('Ingrese la columna para sembrar: ')) - 1
+            print('')
             print('Seleccione el tipo de cultivo')
             print('1. Manzanas')
             print('2. Trigo')
@@ -306,10 +368,21 @@ while r:
             terreno.sembrar_cultivo(fila, columna, cultivo)
 
         elif opcio == '2':
+            fila = int(input('Ingrese la fila del cultivo a regar: ')) - 1
+            columna = int(input('Ingrese la columna del cultivo a regar: ')) - 1
+            terreno.regar(fila, columna)
+
+        elif opcio == '3':
+            fila = int(input('Ingrese la fila del cultivo a tratar: ')) - 1
+            columna = int(input('Ingrese la columna del cultivo a tratar: ')) - 1
+            terreno.tratar_plagas_cultivo(fila, columna)
+
+        elif opcio == '4':
             fila = int(input('Ingrese la fila para cosechar: ')) - 1
             columna = int(input('Ingrese la columna para cosechar: ')) - 1
             terreno.cosechar_cultivo(fila, columna)
-        elif opcio == '3':
+        
+        elif opcio == '5':
             terreno.mostrar_terreno()
 
         else:
@@ -321,7 +394,7 @@ while r:
 
 
     elif opciones == '2':
-        print("El jugador va a dormir:")
+        print("El jugador va a dormir")
         if tiempo.accion == 0:
             tiempo.accion += 7
         elif tiempo.accion == 1:
@@ -371,7 +444,6 @@ while r:
                     inventario_jugador.oro -= coste
                     coste += aumento
 
-
                     print("Nuevas dimensiones:")
                     terreno.mostrar_terreno()
                     print("el nuevo coosto de la siguiente mejora sera:",coste)
@@ -406,7 +478,6 @@ while r:
 
         tiempo.accionN()
         tiempo.seguir_tiempo()
-
 
     elif opciones == "6":
         r = False
