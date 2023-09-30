@@ -1,9 +1,9 @@
 import random
 
 class Tiempo:
-    def __init__(self,dias):
+    def __init__(self):
         self.accion = 0
-        self.dias = dias
+        self.dias = 0
 
     def seguir_tiempo(self):
         if self.accion == 7:
@@ -13,35 +13,43 @@ class Tiempo:
     def accionN(self):
         self.accion = 1 + self.accion
 
-tiempo = Tiempo(0)
+tiempo = Tiempo()
 
-class Cultivos(Tiempo):
-    def __init__(self,dias, nombre, tiempo_brote, tiempo_crecimiento, tiempo_maduracion, productos):
-        super().__init__(dias)
+class Cultivos:
+    def __init__(self, nombre, tiempo_brote, tiempo_crecimiento, tiempo_maduracion, productos):
         self.nombre = nombre
         self.tiempo_brote = tiempo_brote
-        self.tiempo_crecimiento = tiempo_crecimiento 
+        self.tiempo_crecimiento = tiempo_crecimiento
         self.tiempo_maduracion = tiempo_maduracion
         self.etapa = 'Brote'
         self.productos = productos
         self.rendimiento = random.randint(1, 5)
         self.dias_transcurridos = 0
         self.regado = False
+        self.plagas = False
+    
+    def crecer(self):
+        if self.etapa == 'Brote' and self.regado and self.dias_transcurridos >= self.tiempo_brote:
+            self.etapa = 'Crecimiento'
+        elif self.etapa == 'Crecimiento' and self.dias_transcurridos >= self.tiempo_brote + self.tiempo_crecimiento:
+            self.etapa = 'Maduración'
+        elif self.etapa == 'Maduración' and self.dias_transcurridos >= self.tiempo_brote + self.tiempo_crecimiento + self.tiempo_maduracion:
+            self.etapa = 'Cosecha'
+        self.dias_transcurridos += 1
 
     def cosechar(self):
         cantidad_productos = self.rendimiento
         return cantidad_productos
 
-manzanas = Cultivos(tiempo.dias,'Manzana', 2, 3, 4, 'manzanas')
-trigo = Cultivos(tiempo.dias,'Trigo', 1, 3, 2, 'grano de trigo')
-papas = Cultivos(tiempo.dias,'Papa', 3, 2, 2, 'papas')
-fresas = Cultivos(tiempo.dias,'Fresa', 1, 2, 3, 'fresas')
-zanahorias = Cultivos(tiempo.dias,'Zanahoria', 2, 2, 3, 'zanahorias')
+manzanas = Cultivos('Manzana', 2, 3, 4, 'manzanas')
+trigo = Cultivos('Trigo', 1, 3, 2, 'grano de trigo')
+papas = Cultivos('Papa', 3, 2, 2, 'papas')
+fresas = Cultivos('Fresa', 1, 2, 3, 'fresas')
+zanahorias = Cultivos('Zanahoria', 2, 2, 3, 'zanahorias')
 
 
-class TerrenoCultivo(Tiempo):
-    def __init__(self, dias,filas, columnas):
-        super().__init__(dias)
+class TerrenoCultivo:
+    def __init__(self, filas, columnas):
         self.filas = filas
         self.columnas = columnas
         self.terreno = [['-' for c in range(self.columnas)] for f in range(self.filas)]
@@ -51,7 +59,8 @@ class TerrenoCultivo(Tiempo):
             if isinstance(self.terreno[fila][columna], Cultivos):
                 print('Ya hay un cultivo en esta parcela.')
             else:
-                nuevo_cultivo = Cultivos(tiempo.dias,cultivo.nombre, cultivo.tiempo_brote, cultivo.tiempo_crecimiento + tiempo.dias , cultivo.tiempo_maduracion, cultivo.productos)
+                nuevo_cultivo = Cultivos(cultivo.nombre, cultivo.tiempo_brote, cultivo.tiempo_crecimiento, cultivo.tiempo_maduracion, cultivo.productos)
+                nuevo_cultivo.plagas = random.random() < 0.3
                 self.terreno[fila][columna] = nuevo_cultivo
                 print(f'Se ha sembrado {nuevo_cultivo.nombre} en la parcela {fila+1},{columna+1}.')
         else:
@@ -63,11 +72,26 @@ class TerrenoCultivo(Tiempo):
             if isinstance(cultivo, Cultivos) and cultivo.etapa == 'Brote':
                 if not cultivo.regado:
                     cultivo.regado = True
+                    cultivo.crecer()
                     print(f'Se ha regado y comenzado el crecimiento del cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
                 else:
-                    print(f'El cultivo en la parcela {fila + 1},{columna + 1} ya ha sido regado en la etapa de "Brote".')
+                    print(f'El cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1} ya ha sido regado en la etapa de "Brote".')
             else:
-                print(f'No se puede regar el cultivo en la parcela {fila + 1},{columna + 1}.')
+                print(f'No se puede regar el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+        else:
+            print('Ubicación no válida.')
+
+    def tratar_plagas_cultivo(self, fila, columna):
+        if 0 <= fila < self.filas and 0 <= columna < self.columnas:
+            cultivo = self.terreno[fila][columna]
+            if isinstance(cultivo, Cultivos):
+                if cultivo.plagas:
+                    cultivo.plagas = False
+                    print(f'Se han tratado las plagas en el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+                else:
+                    print(f'El cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1} no tiene plagas.')
+            else:
+                print('No hay cultivo en esta parcela.')
         else:
             print('Ubicación no válida.')
 
@@ -106,20 +130,15 @@ class TerrenoCultivo(Tiempo):
             for columna in range(self.columnas):
                 cultivo = self.terreno[fila][columna]
                 if isinstance(cultivo, Cultivos):
-                    if cultivo.etapa == 'Brote' and cultivo.regado:
-                          cultivo.etapa = 'Crecimiento'
-                    elif cultivo.etapa == 'Crecimiento' and tiempo.dias >= cultivo.tiempo_crecimiento:
-                        cultivo.etapa = 'Maduración'
-                    elif cultivo.etapa == 'Maduración' and tiempo.dias >= cultivo.tiempo_crecimiento + cultivo.tiempo_maduracion:
-                        cultivo.etapa = 'Cosecha'
                     estado_regado = "Regado" if cultivo.regado else "No Regado"
-                    print(f'Fila: {fila + 1}, Columna: {columna + 1} | Cultivo: {cultivo.nombre} | Etapa: {cultivo.etapa} | Estado: {estado_regado} | Tiempo:{cultivo.tiempo_crecimiento}')
+                    plagas_info = "con plagas" if cultivo.plagas else "sin plagas"
+                    print(f'Fila: {fila + 1}, Columna: {columna + 1} | Cultivo: {cultivo.nombre} | Etapa: {cultivo.etapa} | Estado: {estado_regado} | Plagas: {plagas_info}')
                     cuadrícula_llena = True
 
         if not cuadrícula_llena:
             print("No hay cultivos sembrados.")
 
-terreno = TerrenoCultivo(tiempo.dias,3, 3)
+terreno = TerrenoCultivo(3, 3)
 
 class Mejoras:
     def __init__(self, terreno):
@@ -152,8 +171,9 @@ while r:
         print("")
         print('1. Sembrar cultivo')
         print("2. Regar cultivo")
-        print("3. Cosechar cultivo")
-        print("4. Mostrar terreno")
+        print("3. Tratar Cultivo")
+        print("4. Cosechar cultivo")
+        print("5. Mostrar terreno")
 
         opcio = input("Elija una opcion: ")
 
@@ -168,7 +188,6 @@ while r:
             print('4. Fresas')
             print('5. Zanahorias')
             cultivo_opcion = input('Ingrese el número correspondiente al cultivo: ')
-            tiempo.accionN()
 
             if cultivo_opcion == '1':
                 cultivo = manzanas
@@ -190,14 +209,18 @@ while r:
             fila = int(input('Ingrese la fila del cultivo a regar: ')) - 1
             columna = int(input('Ingrese la columna del cultivo a regar: ')) - 1
             terreno.regar(fila, columna)
-            tiempo.accionN()
 
         elif opcio == '3':
+            fila = int(input('Ingrese la fila del cultivo a tratar: ')) - 1
+            columna = int(input('Ingrese la columna del cultivo a tratar: ')) - 1
+            terreno.tratar_plagas_cultivo(fila, columna)
+
+        elif opcio == '4':
             fila = int(input('Ingrese la fila para cosechar: ')) - 1
             columna = int(input('Ingrese la columna para cosechar: ')) - 1
             terreno.cosechar_cultivo(fila, columna)
         
-        elif opcio == '4':
+        elif opcio == '5':
             terreno.mostrar_terreno()
 
         else:
@@ -224,7 +247,6 @@ while r:
             tiempo.accion += 2
         elif tiempo.accion == 6:
             tiempo.accion += 1
-        tiempo.seguir_tiempo()
 
     elif opciones == "3":
         tiempo.accionN()
