@@ -1,9 +1,169 @@
 import random
 
+class CantidadItems:
+    def __init__(self, oro):
+        self.oro = oro
+        self.inventario = {
+            'Frutos': {
+                'Manzana': 0,
+                'Trigo': 0,
+                'Papa': 0,
+                'Zanahoria': 0,
+                'Fresa': 0
+            },
+            'Fertilizantes': {
+                'Básico': 0,
+                'Intermedio': 0,
+                'Avanzado': 0
+            },
+            'Semillas': {
+                'Manzana': 0,
+                'Trigo': 0,
+                'Papa': 0,
+                'Zanahoria': 0,
+                'Fresa': 0
+            }
+        }
+
+    def mostrar_inventario(self):
+        print("Inventario del jugador:")
+        print("Oro:", self.oro)
+        for categoria, items in self.inventario.items():
+            print(f"{categoria}:")
+            for item, cantidad in items.items():
+                if cantidad > 0:
+                    print(f"{item}: {cantidad}")
+
+    def agregar_frutos(self, nombre, cantidad):
+        if nombre in self.inventario['Frutos']:
+            self.inventario['Frutos'][nombre] += cantidad
+
+inventario_jugador = CantidadItems(300)
+
+class Tienda(CantidadItems):
+    def __init__(self, inventario_jugador):
+        super().__init__(0)
+        self.inventario_jugador = inventario_jugador
+        self.tienda = {
+            'Frutos': {
+                'Manzana': 50,
+                'Trigo': 30,
+                'Papa': 60,
+                'Zanahoria': 70,
+                'Fresa': 65
+            },
+            'Fertilizantes': {
+                'Básico': 50,
+                'Intermedio': 100,
+                'Avanzado': 220
+            },
+            'Semillas': {
+                'Manzana': 30,
+                'Trigo': 15,
+                'Papa': 25,
+                'Zanahoria': 35,
+                'Fresa': 20
+            }
+        }
+
+    def comprar_semilla(self, semilla, cantidad):
+        precio = self.tienda['Semillas'][semilla]
+        costo_total = precio * cantidad
+        if costo_total <= self.inventario_jugador.oro:
+            self.inventario_jugador.oro -= costo_total
+            self.inventario_jugador.inventario['Semillas'][semilla] += cantidad
+            print(f"Has comprado {cantidad} semillas de {semilla}.")
+        else:
+            print("No tienes suficiente oro para comprar estas semillas.")
+
+    def comprar_fertilizante(self, fertilizante, cantidad):
+        precio = self.tienda['Fertilizantes'][fertilizante]
+        costo_total = precio * cantidad
+        if costo_total <= self.inventario_jugador.oro:
+            self.inventario_jugador.oro -= costo_total
+            self.inventario_jugador.inventario['Fertilizantes'][fertilizante] += cantidad
+            print(f"Has comprado {cantidad} fertilizantes de {fertilizante}.")
+        else:
+            print("No tienes suficiente oro para comprar estos fertilizantes.")
+
+    def vender_fruto(self, fruto, cantidad):
+        if self.inventario_jugador.inventario['Frutos'][fruto] >= cantidad:
+            precio = self.tienda['Frutos'][fruto]
+            ganancia = precio * cantidad
+            self.inventario_jugador.oro += ganancia
+            self.inventario_jugador.inventario['Frutos'][fruto] -= cantidad
+            print(f"Has vendido {cantidad} {fruto}(s) por {ganancia} de oro.")
+        else:
+            print("No tienes suficientes productos para vender.")
+
+    def mostrar_semillas_disponibles(self):
+        print("Semillas disponibles en la tienda:")
+        for i, (semilla, precio) in enumerate(self.tienda['Semillas'].items(), start=1):
+            print(f"{i}. {semilla} - Precio: {precio} oro")
+
+    def mostrar_fertilizantes_disponibles(self):
+        print("Fertilizantes disponibles en la tienda:")
+        for i, (fertilizante, precio) in enumerate(self.tienda['Fertilizantes'].items(), start=1):
+            print(f"{i}. {fertilizante} - Precio: {precio} oro")
+
+    def mostrar_frutos_para_vender(self):
+        print("Frutos que puedes vender:")
+        for i, (fruto, precio) in enumerate(self.tienda['Frutos'].items(), start=1):
+            cantidad_jugador = self.inventario_jugador.inventario['Frutos'][fruto]
+            if cantidad_jugador > 0:
+                print(f"{i}. {fruto} - Precio: {precio} oro - Cantidad en inventario: {cantidad_jugador}")
+
+    def menu_tienda(self):
+        while True:
+            print("\n===== Tienda =====")
+            print("1. Comprar semillas")
+            print("2. Comprar fertilizantes")
+            print("3. Vender frutos")
+            print("4. Salir de la tienda")
+
+            opcion = input("Elige una opción: ")
+
+            if opcion == '1':
+                self.mostrar_semillas_disponibles()
+                eleccion = int(input("Elige el número de la semilla que deseas comprar: "))
+                if 1 <= eleccion <= len(self.tienda['Semillas']):
+                    semilla = list(self.tienda['Semillas'].keys())[eleccion - 1]
+                    cantidad = int(input(f"Ingresa la cantidad de {semilla} que deseas comprar: "))
+                    self.comprar_semilla(semilla, cantidad)
+                else:
+                    print("Opción no válida. Intente de nuevo.")
+
+            elif opcion == '2':
+                self.mostrar_fertilizantes_disponibles()
+                eleccion = int(input("Elige el número del fertilizante que deseas comprar: "))
+                if 1 <= eleccion <= len(self.tienda['Fertilizantes']):
+                    fertilizante = list(self.tienda['Fertilizantes'].keys())[eleccion - 1]
+                    cantidad = int(input(f"Ingresa la cantidad de {fertilizante} que deseas comprar: "))
+                    self.comprar_fertilizante(fertilizante, cantidad)
+                else:
+                    print("Opción no válida. Intente de nuevo.")
+
+            elif opcion == '3':
+                self.mostrar_frutos_para_vender()
+                eleccion = int(input("Elige el número del fruto que deseas vender: "))
+                if 1 <= eleccion <= len(self.tienda['Frutos']):
+                    fruto = list(self.tienda['Frutos'].keys())[eleccion - 1]
+                    cantidad = int(input(f"Ingresa la cantidad de {fruto} que deseas vender: "))
+                    self.vender_fruto(fruto, cantidad)
+                else:
+                    print("Opción no válida. Intente de nuevo.")
+
+            elif opcion == '4':
+                break
+            else:
+                print("Opción no válida. Intente de nuevo.")
+
+tienda1 = Tienda(inventario_jugador)
+
 class Tiempo:
-    def __init__(self,dias):
+    def __init__(self):
         self.accion = 0
-        self.dias = dias
+        self.dias = 0
 
     def seguir_tiempo(self):
         if self.accion == 7:
@@ -13,45 +173,54 @@ class Tiempo:
     def accionN(self):
         self.accion = 1 + self.accion
 
-tiempo = Tiempo(0)
+tiempo = Tiempo()
 
-class Cultivos(Tiempo):
-    def __init__(self,dias, nombre, tiempo_brote, tiempo_crecimiento, tiempo_maduracion, productos):
-        super().__init__(dias)
+class Cultivos:
+    def __init__(self, nombre, tiempo_brote, tiempo_crecimiento, tiempo_maduracion, productos):
         self.nombre = nombre
         self.tiempo_brote = tiempo_brote
-        self.tiempo_crecimiento = tiempo_crecimiento 
+        self.tiempo_crecimiento = tiempo_crecimiento
         self.tiempo_maduracion = tiempo_maduracion
         self.etapa = 'Brote'
         self.productos = productos
         self.rendimiento = random.randint(1, 5)
         self.dias_transcurridos = 0
         self.regado = False
-
+        self.plagas = False        
+    
+    def crecer(self):
+        if self.etapa == 'Brote' and self.regado and self.dias_transcurridos >= self.tiempo_brote:
+            self.etapa = 'Crecimiento'
+        elif self.etapa == 'Crecimiento' and self.dias_transcurridos >= self.tiempo_brote + self.tiempo_crecimiento:
+            self.etapa = 'Maduración'
+        elif self.etapa == 'Maduración' and self.dias_transcurridos >= self.tiempo_brote + self.tiempo_crecimiento + self.tiempo_maduracion:
+            self.etapa = 'Cosecha'
+        self.dias_transcurridos += 1
+        
     def cosechar(self):
         cantidad_productos = self.rendimiento
         return cantidad_productos
 
-manzanas = Cultivos(tiempo.dias,'Manzana', 2, 3, 4, 'manzanas')
-trigo = Cultivos(tiempo.dias,'Trigo', 1, 3, 2, 'grano de trigo')
-papas = Cultivos(tiempo.dias,'Papa', 3, 2, 2, 'papas')
-fresas = Cultivos(tiempo.dias,'Fresa', 1, 2, 3, 'fresas')
-zanahorias = Cultivos(tiempo.dias,'Zanahoria', 2, 2, 3, 'zanahorias')
+manzanas = Cultivos('Manzana', 2, 3, 4, 'manzanas')
+trigo = Cultivos('Trigo', 1, 3, 2, 'grano de trigo')
+papas = Cultivos('Papa', 3, 2, 2, 'papas')
+fresas = Cultivos('Fresa', 1, 2, 3, 'fresas')
+zanahorias = Cultivos('Zanahoria', 2, 2, 3, 'zanahorias')
 
-
-class TerrenoCultivo(Tiempo):
-    def __init__(self, dias,filas, columnas):
-        super().__init__(dias)
+class TerrenoCultivo:
+    def __init__(self, filas, columnas, inventario_jugador):
         self.filas = filas
         self.columnas = columnas
         self.terreno = [['-' for c in range(self.columnas)] for f in range(self.filas)]
+        self.inventario_jugador = inventario_jugador
 
     def sembrar_cultivo(self, fila, columna, cultivo):
         if 0 <= fila < self.filas and 0 <= columna < self.columnas:
             if isinstance(self.terreno[fila][columna], Cultivos):
                 print('Ya hay un cultivo en esta parcela.')
             else:
-                nuevo_cultivo = Cultivos(tiempo.dias,cultivo.nombre, cultivo.tiempo_brote, cultivo.tiempo_crecimiento + tiempo.dias , cultivo.tiempo_maduracion, cultivo.productos)
+                nuevo_cultivo = Cultivos(cultivo.nombre, cultivo.tiempo_brote, cultivo.tiempo_crecimiento, cultivo.tiempo_maduracion, cultivo.productos)
+                nuevo_cultivo.plagas = random.random() < 0.3
                 self.terreno[fila][columna] = nuevo_cultivo
                 print(f'Se ha sembrado {nuevo_cultivo.nombre} en la parcela {fila+1},{columna+1}.')
         else:
@@ -63,11 +232,26 @@ class TerrenoCultivo(Tiempo):
             if isinstance(cultivo, Cultivos) and cultivo.etapa == 'Brote':
                 if not cultivo.regado:
                     cultivo.regado = True
+                    cultivo.crecer()
                     print(f'Se ha regado y comenzado el crecimiento del cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
                 else:
-                    print(f'El cultivo en la parcela {fila + 1},{columna + 1} ya ha sido regado en la etapa de "Brote".')
+                    print(f'El cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1} ya ha sido regado en la etapa de "Brote".')
             else:
-                print(f'No se puede regar el cultivo en la parcela {fila + 1},{columna + 1}.')
+                print(f'No se puede regar el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+        else:
+            print('Ubicación no válida.')
+
+    def tratar_plagas_cultivo(self, fila, columna):
+        if 0 <= fila < self.filas and 0 <= columna < self.columnas:
+            cultivo = self.terreno[fila][columna]
+            if isinstance(cultivo, Cultivos):
+                if cultivo.plagas:
+                    cultivo.plagas = False
+                    print(f'Se han tratado las plagas en el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+                else:
+                    print(f'El cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1} no tiene plagas.')
+            else:
+                print('No hay cultivo en esta parcela.')
         else:
             print('Ubicación no válida.')
 
@@ -77,6 +261,7 @@ class TerrenoCultivo(Tiempo):
             if cultivo != '-':
                 if cultivo.etapa == 'Cosecha':
                     cantidad_productos = cultivo.cosechar()
+                    self.inventario_jugador.agregar_frutos(cultivo.nombre, cantidad_productos)
                     print(f'Se han cosechado {cantidad_productos} productos de {cultivo.nombre} en la parcela {fila+1},{columna+1}')
                     self.terreno[fila][columna] = '-'
                 else:
@@ -106,20 +291,15 @@ class TerrenoCultivo(Tiempo):
             for columna in range(self.columnas):
                 cultivo = self.terreno[fila][columna]
                 if isinstance(cultivo, Cultivos):
-                    if cultivo.etapa == 'Brote' and cultivo.regado:
-                          cultivo.etapa = 'Crecimiento'
-                    elif cultivo.etapa == 'Crecimiento' and tiempo.dias >= cultivo.tiempo_crecimiento:
-                        cultivo.etapa = 'Maduración'
-                    elif cultivo.etapa == 'Maduración' and tiempo.dias >= cultivo.tiempo_crecimiento + cultivo.tiempo_maduracion:
-                        cultivo.etapa = 'Cosecha'
                     estado_regado = "Regado" if cultivo.regado else "No Regado"
-                    print(f'Fila: {fila + 1}, Columna: {columna + 1} | Cultivo: {cultivo.nombre} | Etapa: {cultivo.etapa} | Estado: {estado_regado}')
+                    plagas_info = "con plagas" if cultivo.plagas else "sin plagas"
+                    print(f'Fila: {fila + 1}, Columna: {columna + 1} | Cultivo: {cultivo.nombre} | Etapa: {cultivo.etapa} | Estado: {estado_regado} | Plagas: {plagas_info}')
                     cuadrícula_llena = True
 
         if not cuadrícula_llena:
             print("No hay cultivos sembrados.")
 
-terreno = TerrenoCultivo(tiempo.dias,3, 3)
+terreno = TerrenoCultivo(3, 3,inventario_jugador)
 
 class Mejoras:
     def __init__(self, terreno):
@@ -138,23 +318,26 @@ class Mejoras:
 
 r = True
 while r:
+    print("")
     print("---Menu principal---")
     print("1. Ver Cultivos")
     print("2. Mostrar el tiempo")
     print("3. Dormir")
-    print("4. Mejoras")
-    print("5. Salir")
-
+    print("4. Tienda")
+    print("5. Mejoras")
+    print("6. Inventario")
+    print("7. Salir")
+    
     opciones = input("Elija una opcion: ")
 
     if opciones == '1':
         print("")
         print('1. Sembrar cultivo')
         print("2. Regar cultivo")
-        print("3. Cosechar cultivo")
-        print("4. Mostrar terreno")
+        print("3. Tratar Cultivo")
+        print("4. Cosechar cultivo")
+        print("5. Mostrar terreno")
         opcio = input("Elija una opcion: ")
-        tiempo.accionN()
 
         if opcio == '1':
             fila = int(input('Ingrese la fila para sembrar: ')) - 1
@@ -168,7 +351,8 @@ while r:
             print('5. Zanahorias')
             cultivo_opcion = input('Ingrese el número correspondiente al cultivo: ')
             tiempo.accionN()
-
+            tiempo.seguir_tiempo() 
+            
             if cultivo_opcion == '1':
                 cultivo = manzanas
             elif cultivo_opcion == '2':
@@ -190,17 +374,26 @@ while r:
             columna = int(input('Ingrese la columna del cultivo a regar: ')) - 1
             terreno.regar(fila, columna)
             tiempo.accionN()
+            tiempo.seguir_tiempo() 
 
         elif opcio == '3':
+            fila = int(input('Ingrese la fila del cultivo a tratar: ')) - 1
+            columna = int(input('Ingrese la columna del cultivo a tratar: ')) - 1
+            terreno.tratar_plagas_cultivo(fila, columna)
+            tiempo.accionN()
+            tiempo.seguir_tiempo() 
+
+        elif opcio == '4':
             fila = int(input('Ingrese la fila para cosechar: ')) - 1
             columna = int(input('Ingrese la columna para cosechar: ')) - 1
             terreno.cosechar_cultivo(fila, columna)
             tiempo.accionN()
-        
-        elif opcio == '4':
-            tiempo.accionN()
-            tiempo.seguir_tiempo()
+            tiempo.seguir_tiempo() 
+
+        elif opcio == '5':
             terreno.mostrar_terreno()
+            tiempo.accionN()
+            tiempo.seguir_tiempo() 
 
         else:
             print('Opción no válida. Intente de nuevo.')
@@ -208,7 +401,6 @@ while r:
     elif opciones == '2':
         tiempo.seguir_tiempo()
         print(f"Días: {tiempo.dias}, Accion: {tiempo.accion}")
-
 
     elif opciones == '3':
         print("El jugador va a dormir")
@@ -226,11 +418,18 @@ while r:
             tiempo.accion += 2
         elif tiempo.accion == 6:
             tiempo.accion += 1
-        tiempo.seguir_tiempo()
 
-    elif opciones == '4':
+    elif opciones == "4":
+        tiempo.accionN()
+        tiempo.seguir_tiempo()
+        tienda1.menu_tienda()
+        
+    elif opciones == '5':
         print("")
         print("1: Aumento del arrea de siembra")
+
+        tiempo.accionN()
+        tiempo.seguir_tiempo()
 
         op = input("elija una opcion:")
 
@@ -238,45 +437,58 @@ while r:
             print("")
             print("1: aumentar fila")
             print("2: aumentar columna")
-            opcion = input("elija una opcion")
-            coste = 0
-            bolsa = 0
+            opcion = input("Elija una opción: ")
 
             if opcion == '1':
-                tiempo.accionN()
-                tiempo.seguir_tiempo()
-                if bolsa >= coste:
-                    print("la mejora de su arrea de siembra se a realizaado")
+                coste = 1000
+                aumento = 500
+
+                if inventario_jugador.oro >= coste:
+                    print(f"La mejora de su área de siembra se ha realizado. Costo de la mejora: {coste}")
                     print("")
                     nuevas_filas = 1
                     mejora = Mejoras(terreno)
                     mejora.aumentar_filas(nuevas_filas)
 
-                    print("Nuevas dimenciones:")
-                    terreno.mostrar_terreno()
+                    inventario_jugador.oro -= coste
+                    coste += aumento
 
+                    print("Nuevas dimensiones:")
+                    terreno.mostrar_terreno()
+                    print("el nuevo coosto de la siguiente mejora sera:",coste)
                 else:
-                    print("No tiene suficiente dinero para poder realizar la mejora de su fila")
+                    print("No tiene suficiente dinero para poder realizar la mejora de filas")
+                    print("el costo de su mejora es de:",coste)
 
             if opcion == '2':
-                tiempo.accionN()
-                tiempo.seguir_tiempo()
-                if bolsa >= coste:
-                    print("la mejora de su arrea de siembra se a realizaado")
+                coste = 1000
+                aumento = 500
+
+                if inventario_jugador.oro >= coste:
+                    print(f"La mejora de su área de siembra se ha realizado. Costo de la mejora: {coste}")
                     print("")
                     nuevas_columnas = + 1
                     mejora = Mejoras(terreno)
+
                     mejora.aumentar_columnas(nuevas_columnas)
+                    inventario_jugador.oro -= coste
+                    coste += aumento
 
-                    print("Nuevas dimenciones:")
+                    print("Nuevas dimensiones:")
                     terreno.mostrar_terreno()
-
+                    print("el nuevo coosto de la siguiente mejora sera:", coste)
                 else:
-                    print("No tiene suficiente dinero para poder realizar la mejora de su columna")
+                    print("No tiene suficiente dinero para poder realizar la mejora de filas")
+                    print("el costo de su mejora es de:", coste)
 
+    elif opciones == "6":
 
+        inventario_jugador.mostrar_inventario()
 
-    elif opciones == "5":
+        tiempo.accionN()
+        tiempo.seguir_tiempo()
+
+    elif opciones == "7":
         r = False
 
     else:
