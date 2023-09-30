@@ -28,7 +28,7 @@ class Cultivos:
         self.regado = False
     
     def crecer(self):
-        if self.etapa == 'Brote' and self.regado:
+        if self.etapa == 'Brote' and self.regado and self.dias_transcurridos >= self.tiempo_brote:
             self.etapa = 'Crecimiento'
         elif self.etapa == 'Crecimiento' and self.dias_transcurridos >= self.tiempo_brote + self.tiempo_crecimiento:
             self.etapa = 'Maduración'
