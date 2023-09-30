@@ -113,7 +113,7 @@ class TerrenoCultivo(Tiempo):
                     elif cultivo.etapa == 'Maduración' and tiempo.dias >= cultivo.tiempo_crecimiento + cultivo.tiempo_maduracion:
                         cultivo.etapa = 'Cosecha'
                     estado_regado = "Regado" if cultivo.regado else "No Regado"
-                    print(f'Fila: {fila + 1}, Columna: {columna + 1} | Cultivo: {cultivo.nombre} | Etapa: {cultivo.etapa} | Estado: {estado_regado} | Tiempo:{cultivo.tiempo_crecimiento}')
+                    print(f'Fila: {fila + 1}, Columna: {columna + 1} | Cultivo: {cultivo.nombre} | Etapa: {cultivo.etapa} | Estado: {estado_regado}')
                     cuadrícula_llena = True
 
         if not cuadrícula_llena:
