@@ -26,6 +26,7 @@ class Cultivos:
         self.rendimiento = random.randint(1, 5)
         self.dias_transcurridos = 0
         self.regado = False
+        self.plagas = False
     
     def crecer(self):
         if self.etapa == 'Brote' and self.regado and self.dias_transcurridos >= self.tiempo_brote:
@@ -59,6 +60,7 @@ class TerrenoCultivo:
                 print('Ya hay un cultivo en esta parcela.')
             else:
                 nuevo_cultivo = Cultivos(cultivo.nombre, cultivo.tiempo_brote, cultivo.tiempo_crecimiento, cultivo.tiempo_maduracion, cultivo.productos)
+                nuevo_cultivo.plagas = random.random() < 0.3
                 self.terreno[fila][columna] = nuevo_cultivo
                 print(f'Se ha sembrado {nuevo_cultivo.nombre} en la parcela {fila+1},{columna+1}.')
         else:
@@ -73,9 +75,23 @@ class TerrenoCultivo:
                     cultivo.crecer()
                     print(f'Se ha regado y comenzado el crecimiento del cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
                 else:
-                    print(f'El cultivo en la parcela {fila + 1},{columna + 1} ya ha sido regado en la etapa de "Brote".')
+                    print(f'El cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1} ya ha sido regado en la etapa de "Brote".')
             else:
-                print(f'No se puede regar el cultivo en la parcela {fila + 1},{columna + 1}.')
+                print(f'No se puede regar el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+        else:
+            print('Ubicación no válida.')
+
+    def tratar_plagas_cultivo(self, fila, columna):
+        if 0 <= fila < self.filas and 0 <= columna < self.columnas:
+            cultivo = self.terreno[fila][columna]
+            if isinstance(cultivo, Cultivos):
+                if cultivo.plagas:
+                    cultivo.plagas = False
+                    print(f'Se han tratado las plagas en el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+                else:
+                    print(f'El cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1} no tiene plagas.')
+            else:
+                print('No hay cultivo en esta parcela.')
         else:
             print('Ubicación no válida.')
 
@@ -115,7 +131,8 @@ class TerrenoCultivo:
                 cultivo = self.terreno[fila][columna]
                 if isinstance(cultivo, Cultivos):
                     estado_regado = "Regado" if cultivo.regado else "No Regado"
-                    print(f'Fila: {fila + 1}, Columna: {columna + 1} | Cultivo: {cultivo.nombre} | Etapa: {cultivo.etapa} | Estado: {estado_regado}')
+                    plagas_info = "con plagas" if cultivo.plagas else "sin plagas"
+                    print(f'Fila: {fila + 1}, Columna: {columna + 1} | Cultivo: {cultivo.nombre} | Etapa: {cultivo.etapa} | Estado: {estado_regado} | Plagas: {plagas_info}')
                     cuadrícula_llena = True
 
         if not cuadrícula_llena:
@@ -154,8 +171,9 @@ while r:
         print("")
         print('1. Sembrar cultivo')
         print("2. Regar cultivo")
-        print("3. Cosechar cultivo")
-        print("4. Mostrar terreno")
+        print("3. Tratar Cultivo")
+        print("4. Cosechar cultivo")
+        print("5. Mostrar terreno")
 
         opcio = input("Elija una opcion: ")
 
@@ -193,11 +211,16 @@ while r:
             terreno.regar(fila, columna)
 
         elif opcio == '3':
+            fila = int(input('Ingrese la fila del cultivo a tratar: ')) - 1
+            columna = int(input('Ingrese la columna del cultivo a tratar: ')) - 1
+            terreno.tratar_plagas_cultivo(fila, columna)
+
+        elif opcio == '4':
             fila = int(input('Ingrese la fila para cosechar: ')) - 1
             columna = int(input('Ingrese la columna para cosechar: ')) - 1
             terreno.cosechar_cultivo(fila, columna)
         
-        elif opcio == '4':
+        elif opcio == '5':
             terreno.mostrar_terreno()
 
         else:
