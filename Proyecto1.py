@@ -115,7 +115,7 @@ class Tienda(CantidadItems):
 
     def menu_tienda(self):
         while True:
-            print("\n===== Tienda =====")
+            print("===== Tienda =====")
             print("1. Comprar semillas")
             print("2. Comprar fertilizantes")
             print("3. Vender frutos")
@@ -213,7 +213,7 @@ class TerrenoCultivo(Tiempo):
                 print('Ya hay un cultivo en esta parcela.')
             else:
                 nuevo_cultivo = Cultivos(tiempo.dias, cultivo.nombre, cultivo.tiempo_brote, cultivo.tiempo_crecimiento + tiempo.dias, cultivo.tiempo_maduracion, cultivo.productos)
-                nuevo_cultivo.plagas = random.random() < 0.3
+                nuevo_cultivo.plagas = random.random() < 0.4
                 self.terreno[fila][columna] = nuevo_cultivo
                 print(f'Se ha sembrado {nuevo_cultivo.nombre} en la parcela {fila+1},{columna+1}.')
         else:
@@ -316,10 +316,9 @@ class Mejoras:
             fila.extend(['-' for _ in range(nuevas_columnas)])
         self.terreno.columnas += nuevas_columnas
 
-r = True
-while r:
+while True:
     print("")
-    print("---Menu principal---")
+    print("== Menu principal ==")
     print("1. Ver Cultivos")
     print("2. Mostrar el tiempo")
     print("3. Dormir")
@@ -331,78 +330,87 @@ while r:
     opciones = input("Elija una opcion: ")
 
     if opciones == '1':
-        print("")
-        print('1. Sembrar cultivo')
-        print("2. Regar cultivo")
-        print("3. Tratar Cultivo")
-        print("4. Cosechar cultivo")
-        print("5. Mostrar terreno")
-        opcio = input("Elija una opcion: ")
+        while True:
+            print("")
+            print('== Cultivos ==')
+            print('1. Sembrar cultivo')
+            print("2. Regar cultivo")
+            print("3. Tratar Cultivo")
+            print("4. Cosechar cultivo")
+            print("5. Mostrar terreno")
+            print('6. Salir')
+            opcio = input("Elija una opcion: ")
 
-        if opcio == '1':
-            fila = int(input('Ingrese la fila para sembrar: ')) - 1
-            columna = int(input('Ingrese la columna para sembrar: ')) - 1
-            print('')
-            print('Seleccione el tipo de cultivo')
-            print('1. Manzanas')
-            print('2. Trigo')
-            print('3. Papas')
-            print('4. Fresas')
-            print('5. Zanahorias')
-            cultivo_opcion = input('Ingrese el número correspondiente al cultivo: ')
-            tiempo.accionN()
-            tiempo.seguir_tiempo() 
-            
-            if cultivo_opcion == '1':
-                cultivo = manzanas
-            elif cultivo_opcion == '2':
-                cultivo = trigo
-            elif cultivo_opcion == '3':
-                cultivo = papas
-            elif cultivo_opcion == '4':
-                cultivo = fresas
-            elif cultivo_opcion == '5':
-                cultivo = zanahorias
+            if opcio == '1':
+                fila = int(input('Ingrese la fila para sembrar: ')) - 1
+                columna = int(input('Ingrese la columna para sembrar: ')) - 1
+                print('')
+                print('Seleccione el tipo de cultivo')
+                print('1. Manzanas')
+                print('2. Trigo')
+                print('3. Papas')
+                print('4. Fresas')
+                print('5. Zanahorias')
+                cultivo_opcion = input('Ingrese el número correspondiente al cultivo: ')
+                tiempo.accionN()
+                tiempo.seguir_tiempo() 
+                
+                if cultivo_opcion == '1':
+                    cultivo = manzanas
+                elif cultivo_opcion == '2':
+                    cultivo = trigo
+                elif cultivo_opcion == '3':
+                    cultivo = papas
+                elif cultivo_opcion == '4':
+                    cultivo = fresas
+                elif cultivo_opcion == '5':
+                    cultivo = zanahorias
+                else:
+                    print('Opción no válida. Intente de nuevo.')
+                    continue
+
+                terreno.sembrar_cultivo(fila, columna, cultivo)
+
+            elif opcio == '2':
+                fila = int(input('Ingrese la fila del cultivo a regar: ')) - 1
+                columna = int(input('Ingrese la columna del cultivo a regar: ')) - 1
+                terreno.regar(fila, columna)
+                tiempo.accionN()
+                tiempo.seguir_tiempo() 
+
+            elif opcio == '3':
+                fila = int(input('Ingrese la fila del cultivo a tratar: ')) - 1
+                columna = int(input('Ingrese la columna del cultivo a tratar: ')) - 1
+                terreno.tratar_plagas_cultivo(fila, columna)
+                tiempo.accionN()
+                tiempo.seguir_tiempo() 
+
+            elif opcio == '4':
+                fila = int(input('Ingrese la fila para cosechar: ')) - 1
+                columna = int(input('Ingrese la columna para cosechar: ')) - 1
+                terreno.cosechar_cultivo(fila, columna)
+                tiempo.accionN()
+                tiempo.seguir_tiempo() 
+
+            elif opcio == '5':
+                terreno.mostrar_terreno()
+                tiempo.accionN()
+                tiempo.seguir_tiempo()
+
+            elif opcio == '6':
+                break 
+
             else:
                 print('Opción no válida. Intente de nuevo.')
-                continue
-
-            terreno.sembrar_cultivo(fila, columna, cultivo)
-
-        elif opcio == '2':
-            fila = int(input('Ingrese la fila del cultivo a regar: ')) - 1
-            columna = int(input('Ingrese la columna del cultivo a regar: ')) - 1
-            terreno.regar(fila, columna)
-            tiempo.accionN()
-            tiempo.seguir_tiempo() 
-
-        elif opcio == '3':
-            fila = int(input('Ingrese la fila del cultivo a tratar: ')) - 1
-            columna = int(input('Ingrese la columna del cultivo a tratar: ')) - 1
-            terreno.tratar_plagas_cultivo(fila, columna)
-            tiempo.accionN()
-            tiempo.seguir_tiempo() 
-
-        elif opcio == '4':
-            fila = int(input('Ingrese la fila para cosechar: ')) - 1
-            columna = int(input('Ingrese la columna para cosechar: ')) - 1
-            terreno.cosechar_cultivo(fila, columna)
-            tiempo.accionN()
-            tiempo.seguir_tiempo() 
-
-        elif opcio == '5':
-            terreno.mostrar_terreno()
-            tiempo.accionN()
-            tiempo.seguir_tiempo() 
-
-        else:
-            print('Opción no válida. Intente de nuevo.')
 
     elif opciones == '2':
         tiempo.seguir_tiempo()
+        print('')
+        print('== Tiempo ==')
         print(f"Días: {tiempo.dias}, Accion: {tiempo.accion}")
 
     elif opciones == '3':
+        print('')
         print("El jugador va a dormir")
         if tiempo.accion == 0:
             tiempo.accion += 7
@@ -427,17 +435,18 @@ while r:
         
     elif opciones == '5':
         print("")
-        print("1: Aumento del arrea de siembra")
+        print('== Mejoras ==')
+        print("1. Aumento del arrea de siembra")
 
         tiempo.accionN()
         tiempo.seguir_tiempo()
 
-        op = input("elija una opcion:")
+        op = input("Elija una opcion: ")
 
         if op == '1':
             print("")
-            print("1: aumentar fila")
-            print("2: aumentar columna")
+            print("1. aumentar fila")
+            print("2. aumentar columna")
             opcion = input("Elija una opción: ")
 
             if opcion == '1':
@@ -483,14 +492,15 @@ while r:
                     print("el costo de su mejora es de:", coste)
 
     elif opciones == "6":
-
+        print('')
+        print('== Inventario ==')
         inventario_jugador.mostrar_inventario()
 
         tiempo.accionN()
         tiempo.seguir_tiempo()
 
     elif opciones == "7":
-        r = False
+        break
 
     else:
         print("Elija otra opcion")
