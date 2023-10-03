@@ -113,7 +113,7 @@ class Tienda(CantidadItems):
         else:
             print("No tienes suficiente oro para comprar estos fertilizantes.")
 
-     def comprar_medicina(self, medicina, cantidad):
+    def comprar_medicina(self, medicina, cantidad):
         precio = self.tienda['Medicina'][medicina]
         costo_total = precio * cantidad
         if costo_total <= self.inventario_jugador.oro:
