@@ -1,6 +1,4 @@
 import random
-
-
 class CantidadItems:
     def __init__(self, oro):
         self.oro = oro
@@ -125,7 +123,7 @@ class Tienda(CantidadItems):
             print("No tienes suficiente oro para comprar esta Medicina.")
 
     def comprar_animales(self, animales, cantidad):
-        precio = self.tienda['Medicina'][animales]
+        precio = self.tienda['Producto_Animal'][animales]
         costo_total = precio * cantidad
         if costo_total <= self.inventario_jugador.oro:
             self.inventario_jugador.oro -= costo_total
@@ -229,7 +227,7 @@ class Tienda(CantidadItems):
                 if 1 <= eleccion <= len(self.tienda['Medicina']):
                     medicina = list(self.tienda['Medicina'].keys())[eleccion - 1]
                     cantidad = int(input(f"Ingresa la cantidad de {medicina} que deseas comprar: "))
-                    self.comprar_fertilizante(medicina, cantidad)
+                    self.comprar_medicina(medicina, cantidad)
                 else:
                     print("Opción no válida. Intente de nuevo.")
 
@@ -239,7 +237,7 @@ class Tienda(CantidadItems):
                 if 1 <= eleccion <= len(self.tienda['Producto_Animal']):
                     producto_Animal = list(self.tienda['Producto_Animal'].keys())[eleccion - 1]
                     cantidad = int(input(f"Ingresa la cantidad de {producto_Animal} que deseas comprar: "))
-                    self.comprar_fertilizante(producto_Animal, cantidad)
+                    self.comprar_animales(producto_Animal, cantidad)
                 else:
                     print("Opción no válida. Intente de nuevo.")
 
@@ -859,4 +857,3 @@ while r:
 
     else:
         print("Elija otra opcion")
-  
