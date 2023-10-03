@@ -90,7 +90,7 @@ class Tienda(CantidadItems):
             },
             'Medicina': {
                 'Medicina para animales': 75,
-                'Abono especial para plagas': 55
+                'abono especial para plagas': 55
             }
         }
 
@@ -195,6 +195,7 @@ class Tienda(CantidadItems):
         while True:
             print('')
             print("\n===== Tienda =====")
+            print('Dinero disponible', inventario_jugador.oro)
             print("1. Comprar semillas")
             print("2. Comprar fertilizantes")
             print("3. Comprar medicinas y abono especial")
@@ -352,7 +353,6 @@ class TerrenoCultivo(Tiempo):
         else:
             print("Ubicación no válida")
 
-
     def regar(self, fila, columna):
         if 0 <= fila < self.filas and 0 <= columna < self.columnas:
             cultivo = self.terreno[fila][columna]
@@ -417,10 +417,15 @@ class TerrenoCultivo(Tiempo):
             cultivo = self.terreno[fila][columna]
             if isinstance(cultivo, Cultivos):
                 if cultivo.plagas:
-                    cultivo.plagas = False
-                    cultivo.tratado = True
-                    cultivo.ha_tenido_plagas = True
-                    print(f'Se han tratado las plagas en el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+                    cantidad_abono = self.inventario_jugador.inventario['Medicina']['abono especial para plagas']
+                    if cantidad_abono > 0:
+                        cultivo.plagas = False
+                        cultivo.tratado = True
+                        cultivo.ha_tenido_plagas = True
+                        self.inventario_jugador.inventario['Medicina']['abono especial para plagas'] -= 1
+                        print(f'Se han tratado las plagas en el cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1}.')
+                    else:
+                         print('No tienes suficiente abono especial para plagas en el inventario.')
                 else:
                     print(f'El cultivo de {cultivo.nombre} en la parcela {fila + 1},{columna + 1} no tiene plagas.')
             else:
@@ -621,9 +626,7 @@ class TerrenoAnimal(Tiempo):
         if not cuadricula_llena:
             print("No hay animales criados.")
 
-animal = TerrenoAnimal(tiempo.dias,3, 3, inventario_jugador)
-
-
+animal = TerrenoAnimal(tiempo.dias,2, 2, inventario_jugador)
 
 class Mejoras:
     def __init__(self, terreno):
@@ -810,9 +813,6 @@ while True:
 
         else:
             print('Opción no válida. Intente de nuevo.')
-
-    
-
     
     elif opciones == '3':
         tiempo.seguir_tiempo()
