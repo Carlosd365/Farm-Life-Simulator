@@ -1,7 +1,7 @@
 # Farm-Life-Simulator
 
 ## Descripción
-Farm-Life-Simulator es nuestro primer proyecto de programación avanzada, diseñado y desarrollado por el equipo La gramjita de los panas. Este proyecto es un simulador de vida en una granja que permite a los jugadores experimentar la vida en el campo, desde el cultivo de cultivos hasta la cría de animales y la gestión de una granja próspera.
+Farm-Life-Simulator es nuestro primer proyecto de programación avanzada, diseñado y desarrollado por el equipo La granjita de los panas. Este proyecto es un simulador de vida en una granja que permite a los jugadores experimentar la vida en el campo, desde el cultivo de cultivos hasta la cría de animales y la gestión de una granja próspera.
 
 ## Integrantes del Equipo
 
