@@ -385,7 +385,7 @@ class TerrenoCultivo(Tiempo):
         if not cuadrícula_llena:
             print("No hay cultivos sembrados.")
 
-terreno = TerrenoCultivo(tiempo.dias, 3, 3,inventario_jugador)
+terreno = TerrenoCultivo(tiempo.dias, 2, 2,inventario_jugador)
 
 class Mejoras:
     def __init__(self, terreno):
