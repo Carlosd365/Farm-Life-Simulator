@@ -914,11 +914,4 @@ while True:
         break
 
     else:
-        print("Elija otra opcion")     
-
-
-
-
-
-
-
+        print("Elija otra opcion")
