@@ -194,7 +194,7 @@ class Tienda(CantidadItems):
     def menu_tienda(self):
         while True:
             print('')
-            print("\n===== Tienda =====")
+            print("===== Tienda =====")
             print('Dinero disponible', inventario_jugador.oro)
             print("1. Comprar semillas")
             print("2. Comprar fertilizantes")
@@ -620,7 +620,7 @@ class TerrenoAnimal(Tiempo):
                     elif cultivo2.etapaA == 'Adulto' and tiempo.dias >= cultivo2.tiempo_crecimientoA + cultivo2.tiempo_maduracionA:
                         cultivo2.etapaA = 'Cosecha'
                     estado_regado2 = "Alimentado" if cultivo2.regadoA else "No alimentado"
-                    print(f'Fila: {fila2 + 1}, Columna: {columna2 + 1} | Cultivo: {cultivo2.nombreA} | Etapa: {cultivo2.etapaA} | Estado: {estado_regado2}')
+                    print(f'Fila: {fila2 + 1}, Columna: {columna2 + 1} | Animal: {cultivo2.nombreA} | Etapa: {cultivo2.etapaA} | Estado: {estado_regado2}')
                     cuadricula_llena = True
 
         if not cuadricula_llena:
@@ -645,7 +645,7 @@ class Mejoras:
 
 while True:
     print("")
-    print("---Menu principal---")
+    print("== Menu principal ==")
     print("1. Ver Cultivos")
     print("2. Ver Animales")
     print("3. Mostrar el tiempo")
@@ -757,62 +757,67 @@ while True:
                 print('Opción no válida. Intente de nuevo.')
 
     elif opciones == '2':
-        print("")
-        print('1. Criar animal')
-        print("2. Alimentar animal")
-        print("3. Recoger Prodcutos")
-        print("4. Mostrar terreno")
-        opcio = input("Elija una opcion: ")
-        tiempo.accionN()
-
-        if opcio == '1':
-            fila = int(input('Ingrese la fila para criar: ')) - 1
-            columna = int(input('Ingrese la columna para criar: ')) - 1
-            print('')
-            print('Seleccione el tipo de animal')
-            print('1. Vaca')
-            print('2. Pollo')
-            print('3. Cerdo')
-            print('4. Conejo')
-            print('5. Pato')
-            cultivo_opcion = input('Ingrese el número correspondiente al animal: ')
+        while True:
+            print("")
+            print('=== Animales ===')
+            print('1. Criar animal')
+            print("2. Alimentar animal")
+            print("3. Recoger Prodcutos")
+            print("4. Mostrar terreno")
+            print('5. Salir')
+            opcio = input("Elija una opcion: ")
             tiempo.accionN()
 
-            if cultivo_opcion == '1':
-                cultivo2 = vaca
-            elif cultivo_opcion == '2':
-                cultivo2 = pollo
-            elif cultivo_opcion == '3':
-                cultivo2 = cerdo
-            elif cultivo_opcion == '4':
-                cultivo2 = conejo
-            elif cultivo_opcion == '5':
-                cultivo2 = pato
+            if opcio == '1':
+                fila = int(input('Ingrese la fila para criar: ')) - 1
+                columna = int(input('Ingrese la columna para criar: ')) - 1
+                print('')
+                print('Seleccione el tipo de animal')
+                print('1. Vaca')
+                print('2. Pollo')
+                print('3. Cerdo')
+                print('4. Conejo')
+                print('5. Pato')
+                cultivo_opcion = input('Ingrese el número correspondiente al animal: ')
+                tiempo.accionN()
+
+                if cultivo_opcion == '1':
+                    cultivo2 = vaca
+                elif cultivo_opcion == '2':
+                    cultivo2 = pollo
+                elif cultivo_opcion == '3':
+                    cultivo2 = cerdo
+                elif cultivo_opcion == '4':
+                    cultivo2 = conejo
+                elif cultivo_opcion == '5':
+                    cultivo2 = pato
+                else:
+                    print('Opción no válida. Intente de nuevo.')
+                    continue
+
+                animal.sembrar_cultivo(fila, columna, cultivo2)
+
+            elif opcio == '2':
+                fila2 = int(input('Ingrese la fila del animal a alimentar: ')) - 1
+                columna2 = int(input('Ingrese la columna del animal a alimentar: ')) - 1
+                animal.regar(fila2, columna2)
+                tiempo.accionN()
+
+            elif opcio == '3':
+                fila2 = int(input('Ingrese la fila para cosechar: ')) - 1
+                columna2 = int(input('Ingrese la columna para cosechar: ')) - 1
+                animal.cosechar_cultivo2(fila2, columna2)
+                tiempo.accionN()
+
+            elif opcio == '4':
+                tiempo.accionN()
+                tiempo.seguir_tiempo()
+                animal.mostrar_terreno()
+
+            elif opcio == '5':
+                break
             else:
                 print('Opción no válida. Intente de nuevo.')
-                continue
-
-            animal.sembrar_cultivo(fila, columna, cultivo2)
-
-        elif opcio == '2':
-            fila2 = int(input('Ingrese la fila del animal a alimentar: ')) - 1
-            columna2 = int(input('Ingrese la columna del animal a alimentar: ')) - 1
-            animal.regar(fila2, columna2)
-            tiempo.accionN()
-
-        elif opcio == '3':
-            fila2 = int(input('Ingrese la fila para cosechar: ')) - 1
-            columna2 = int(input('Ingrese la columna para cosechar: ')) - 1
-            animal.cosechar_cultivo2(fila2, columna2)
-            tiempo.accionN()
-
-        elif opcio == '4':
-            tiempo.accionN()
-            tiempo.seguir_tiempo()
-            animal.mostrar_terreno()
-
-        else:
-            print('Opción no válida. Intente de nuevo.')
     
     elif opciones == '3':
         tiempo.seguir_tiempo()
