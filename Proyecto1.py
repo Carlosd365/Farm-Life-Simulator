@@ -23,10 +23,10 @@ class CantidadItems:
                 'Fresa': 0
             },
             'Producto_Animal': {
-                'Pollo': 0,
-                'Cerdo': 0,
-                'Conejo': 0,
-                'Pato': 0
+                'Huevos de Pollo': 0,
+                'Trufas': 0,
+                'Lana de Conejo': 0,
+                'Huevos de Pato': 0
             },
             'Medicina': {
                 'Medicina para animales': 0,
