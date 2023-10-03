@@ -25,6 +25,7 @@ class CantidadItems:
                 
             },
             'Producto_Animal': {
+                'Vaca': 0,
                 'Pollo': 0,
                 'Cerdo': 0,
                 'Conejo': 0,
