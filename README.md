@@ -12,7 +12,7 @@ Farm-Life-Simulator es nuestro primer proyecto de programación avanzada, diseñ
 ## Funcionalidades Principales
 
 - **Cultivos:** Los jugadores pueden plantar y cosechar una variedad de cultivos, como manzanas, trigo, papas, fresas y zanahorias. Tambien tiene la opción de regar cultivos para que comiencen acrecer, que se pueda fertilizar con distintos tipos de fertilizantes para que se pueda reducir cierta catidad de dias dependiendo del fertilizante, se puede tratar las plagas ya que hay cierta posibilidad de que el cultivo tenga plagas y tambie se puede mostrar el terreno de cultivos y tiene una lista de todos los cultivos sembrados.
-- **Animales:** Los jugadores pueden criar y cuidar de animales, como vacas, gallinas y conejos, para producir leche, huevos y lana.
+- **Animales:** Los jugadores pueden criar y cuidar de animales, como vacas, gallinas y ovejas para producior leche, huevos y lana. A los animales se les puede dar comida, acariciar para que puedan estar felices y alimetar para que puedan crecer, lo animales tambien pueden morir si no se cumplen cieros requisitos como darles de comer al igual que enfermarse se les puede tratar conprando la medicina necesaria..
 - **Tiempo y acciones:** Tiene la opción de mostrar el tiempo y la cantidad de acciones ya que se implemento tiempo por accion cuando pasan 7 acciones es un 1 eso nos sirve para el tiempo el general del juego.
 - **Dormir:** Esta opcion permite que pase un dias sin la necesidad de ralaizar las 7 acciones.
 - **Tienda:** En esta opcion se ingresa a la tienda donde se pueden comprar semillas, animales, fertilizantes y medicinas. Tambien se pueden vender frutos y productos para poder ganar monedas y con esas mismas comprar suministros.
