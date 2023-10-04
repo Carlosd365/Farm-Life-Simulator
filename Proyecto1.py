@@ -552,7 +552,7 @@ class TerrenoAnimal(Tiempo):
                 else:
                     print(f'El animal en la parcela{fila2 + 1},{columna2 + 1} ya ha sido alimentado.')
             else:
-                print(f'No se puede alimentar al animal en la parcela {fila2 + 1},{columna2 + 1}.')
+                print(f'No hay animal en la parcela {fila2 + 1},{columna2 + 1} para darle de comer.')
         else:
             print('Ubicación no válida.')
     
@@ -566,7 +566,7 @@ class TerrenoAnimal(Tiempo):
                 else:
                     print(f'El animal en la parcela{fila2 + 1},{columna2 + 1} ya esta feliz.')
             else:
-                print(f'No se puede acariciar al animal en la parcela {fila2 + 1},{columna2 + 1}.')
+                print(f'No hay animal en la parcela {fila2 + 1},{columna2 + 1} para acariciar.')
         else:
             print('Ubicación no válida.')
 
@@ -581,7 +581,7 @@ class TerrenoAnimal(Tiempo):
                 else:
                     print(f'El Animal de {animal.nombre} en la parcela {fila + 1},{columna + 1} no tiene enfermedades.')
             else:
-                print('No hay Animales en esta parcela.')
+                print(f'No hay animal en la parcela {fila2 + 1},{columna2 + 1} para tratar.')
         else:
             print('Ubicación no válida.')
 
@@ -597,7 +597,7 @@ class TerrenoAnimal(Tiempo):
                 else:
                     print('El animal no esta listo para cosechar.')
             else:
-                print('no hay animales para cosechar en esta parcela.')
+                print(f'No hay animal en la parcela {fila2 + 1},{columna2 + 1} para acariciar.')
         else:
             print('Ubicación no válida')
 
@@ -631,7 +631,7 @@ class TerrenoAnimal(Tiempo):
                         cultivo2.etapaA = 'Adulto'
                         cultivo2.caricia = False
                         cultivo2.regadoA = False
-                    elif cultivo2.etapaA == 'Adulto' and cultivo2.caricia and  tiempo.dias >= cultivo2.tiempo_crecimientoA + cultivo2.tiempo_maduracionA:
+                    elif cultivo2.etapaA == 'Adulto' and cultivo2.caricia and  tiempo.dias >= cultivo2.tiempo_maduracionA:
                         cultivo2.etapaA = 'Cosecha'
                     estado_regado2 = "Alimentado" if cultivo2.regadoA else "No alimentado"
                     estado_emocion = "Feliz" if cultivo2.caricia else "Triste"
