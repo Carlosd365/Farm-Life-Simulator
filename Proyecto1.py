@@ -27,9 +27,7 @@ class CantidadItems:
             'Producto_Animal': {
                 'Vaca': 0,
                 'Pollo': 0,
-                'Cerdo': 0,
-                'Conejo': 0,
-                'Pato': 0
+                'Oveja': 0,
             },
             'Medicina': {
                 'Medicina para animales': 0,
@@ -84,9 +82,7 @@ class Tienda(CantidadItems):
             'Producto_Animal': {
                 'Vaca': 150,
                 'Pollo': 66,
-                'Cerdo': 120,
-                'Conejo': 45,
-                'Pato': 96
+                'Oveja': 120,
             },
             'Medicina': {
                 'Medicina para animales': 75,
@@ -516,17 +512,15 @@ class Animales(Tiempo):
         self.dias_transcurridosA = 0
         self.regadoA = False
         self.plagaA = False
+        self.caricia = False
 
     def cosechar(self):
         cantidad_productosA = self.rendimiento
         return cantidad_productosA
 
-vaca = Animales(tiempo.dias,'Vaca', 2, 3, 4, 'Leche de Vaca')
-pollo = Animales(tiempo.dias,'Pollo', 1, 3, 2, 'Huevos de Pollo')
-cerdo = Animales(tiempo.dias,'Cerdo', 3, 2, 2, 'Trufas')
-conejo = Animales(tiempo.dias,'Conejo', 1, 2, 3, 'Lana de Conejo')
-pato = Animales(tiempo.dias,'Pato', 2, 2, 3, 'Huevo de Pato')
-
+vaca = Animales(tiempo.dias,'Vaca', 5, 7, 9, 'Leche de Vaca')
+pollo = Animales(tiempo.dias,'Pollo', 4, 7, 8, 'Huevos de Pollo')
+cerdo = Animales(tiempo.dias,'Oveja', 5, 6, 8, 'Trufas')
 
 class TerrenoAnimal(Tiempo):
     def __init__(self, dias,filas2, columnas2, inventario_jugador):
@@ -541,7 +535,7 @@ class TerrenoAnimal(Tiempo):
             if isinstance(self.terreno2[fila2][columna2], Animales):
                 print('Ya hay un animal en esta parcela.')
             else:
-                nuevo_cultivo2 = Animales(tiempo.dias,cultivo2.nombreA, cultivo2.tiempo_broteA, cultivo2.tiempo_crecimientoA + tiempo.dias , cultivo2.tiempo_maduracionA, cultivo2.productosA)
+                nuevo_cultivo2 = Animales(tiempo.dias,cultivo2.nombreA, cultivo2.tiempo_broteA + tiempo.dias, cultivo2.tiempo_crecimientoA + tiempo.dias , cultivo2.tiempo_maduracionA, cultivo2.productosA)
                 nuevo_cultivo2.plaga = random.random()<0.2
                 self.terreno2[fila2][columna2] = nuevo_cultivo2
                 print(f'Se ha colocado un animal {nuevo_cultivo2.nombreA} en la parcela {fila2+1},{columna2+1}.')
@@ -551,7 +545,7 @@ class TerrenoAnimal(Tiempo):
     def regar(self, fila2, columna2):
         if 0 <= fila2 < self.filas2 and 0 <= columna2 < self.columnas2:
             cultivo2 = self.terreno2[fila2][columna2]
-            if isinstance(cultivo2, Animales) and cultivo2.etapaA == 'Brote':
+            if isinstance(cultivo2, Animales):
                 if not cultivo2.regadoA:
                     cultivo2.regadoA = True
                     print(f'Se ha alimentado a {cultivo2.nombreA} en la parcela {fila2 + 1},{columna2 + 1}.')
@@ -559,6 +553,20 @@ class TerrenoAnimal(Tiempo):
                     print(f'El animal en la parcela{fila2 + 1},{columna2 + 1} ya ha sido alimentado.')
             else:
                 print(f'No se puede alimentar al animal en la parcela {fila2 + 1},{columna2 + 1}.')
+        else:
+            print('Ubicación no válida.')
+    
+    def acariciar(self, fila2, columna2):
+        if 0 <= fila2 < self.filas2 and 0 <= columna2 < self.columnas2:
+            cultivo2 = self.terreno2[fila2][columna2]
+            if isinstance(cultivo2, Animales):
+                if not cultivo2.caricia:
+                    cultivo2.caricia = True
+                    print(f'Se ha acariciado a {cultivo2.nombreA} en la parcela {fila2 + 1},{columna2 + 1}.')
+                else:
+                    print(f'El animal en la parcela{fila2 + 1},{columna2 + 1} ya esta feliz.')
+            else:
+                print(f'No se puede acariciar al animal en la parcela {fila2 + 1},{columna2 + 1}.')
         else:
             print('Ubicación no válida.')
 
@@ -581,10 +589,10 @@ class TerrenoAnimal(Tiempo):
         if 0 <= fila2 < self.filas2 and 0 <= columna2 < self.columnas2:
             cultivo = self.terreno2[fila2][columna2]
             if cultivo != '-':
-                if cultivo.etapa == 'Cosecha':
+                if cultivo.etapaA == 'Cosecha':
                     cantidad_productos = cultivo.cosechar()
-                    self.inventario_jugador.agregar_frutos(cultivo.nombre, cantidad_productos)
-                    print(f'Se han cosechado {cantidad_productos} productos de {cultivo.nombre} en la parcela {fila2+1},{columna2+1}')
+                    self.inventario_jugador.agregar_frutos(cultivo.nombreA, cantidad_productos)
+                    print(f'Se han cosechado {cantidad_productos} productos de {cultivo.nombreA} en la parcela {fila2+1},{columna2+1}')
                     self.terreno2[fila2][columna2] = '-'
                 else:
                     print('El animal no esta listo para cosechar.')
@@ -597,9 +605,7 @@ class TerrenoAnimal(Tiempo):
         emojis = {
             'Vaca': '🐄',
             'Pollo': '🐔',
-            'Cerdo': '🐖',
-            'Conejo': '🐇',
-            'Pato': '🦆'
+            'Oveja': '🐑',
         }
         for i in self.terreno2:
             print('+----' * self.columnas2 + '+')
@@ -613,16 +619,24 @@ class TerrenoAnimal(Tiempo):
             for columna2 in range(self.columnas2):
                 cultivo2 = self.terreno2[fila2][columna2]
                 if isinstance(cultivo2, Animales):
-                    if cultivo2.etapaA == 'Cria' and cultivo2.regadoA:
-                          cultivo2.etapaA = 'Joven'
-                    elif cultivo2.etapaA == 'Joven' and tiempo.dias >= cultivo2.tiempo_crecimientoA:
+                    if (tiempo.dias > cultivo2.tiempo_broteA + 6 and cultivo2.etapaA == "Cria") or (tiempo.dias > cultivo2.tiempo_crecimientoA + 6 and cultivo2.etapaA == "Joven") or (tiempo.dias > cultivo2.tiempo_crecimientoA + cultivo2.tiempo_maduracionA + 6 and cultivo2.etapaA == "Adulto"):
+                        print(f'El animal en la parcela {fila2+1}, {columna2+1} a muerto')
+                        self.terreno2[fila2][columna2] = '-'
+
+                    if cultivo2.etapaA == 'Cria' and cultivo2.regadoA and cultivo2.caricia and tiempo.dias >= cultivo2.tiempo_broteA:
+                        cultivo2.etapaA = 'Joven'
+                        cultivo2.regadoA = False
+                        cultivo2.caricia = False
+                    elif (cultivo2.etapaA == 'Joven' and cultivo2.caricia) and (cultivo2.regadoA and tiempo.dias >= cultivo2.tiempo_crecimientoA):
                         cultivo2.etapaA = 'Adulto'
-                    elif cultivo2.etapaA == 'Adulto' and tiempo.dias >= cultivo2.tiempo_crecimientoA + cultivo2.tiempo_maduracionA:
+                        cultivo2.caricia = False
+                        cultivo2.regadoA = False
+                    elif cultivo2.etapaA == 'Adulto' and cultivo2.caricia and  tiempo.dias >= cultivo2.tiempo_crecimientoA + cultivo2.tiempo_maduracionA:
                         cultivo2.etapaA = 'Cosecha'
                     estado_regado2 = "Alimentado" if cultivo2.regadoA else "No alimentado"
-                    print(f'Fila: {fila2 + 1}, Columna: {columna2 + 1} | Animal: {cultivo2.nombreA} | Etapa: {cultivo2.etapaA} | Estado: {estado_regado2}')
+                    estado_emocion = "Feliz" if cultivo2.caricia else "Triste"
+                    print(f'Fila: {fila2 + 1}, Columna: {columna2 + 1} | Animal: {cultivo2.nombreA} | Etapa: {cultivo2.etapaA} | Estado: {estado_regado2} y {estado_emocion}')
                     cuadricula_llena = True
-
         if not cuadricula_llena:
             print("No hay animales criados.")
 
@@ -762,9 +776,10 @@ while True:
             print('=== Animales ===')
             print('1. Criar animal')
             print("2. Alimentar animal")
-            print("3. Recoger Prodcutos")
-            print("4. Mostrar terreno")
-            print('5. Salir')
+            print("3. Acariciar animal")
+            print("4. Recoger Prodcutos")
+            print("5. Mostrar terreno")
+            print('6. Salir')
             opcio = input("Elija una opcion: ")
             tiempo.accionN()
 
@@ -775,9 +790,7 @@ while True:
                 print('Seleccione el tipo de animal')
                 print('1. Vaca')
                 print('2. Pollo')
-                print('3. Cerdo')
-                print('4. Conejo')
-                print('5. Pato')
+                print('3. Oveja')
                 cultivo_opcion = input('Ingrese el número correspondiente al animal: ')
                 tiempo.accionN()
 
@@ -787,10 +800,6 @@ while True:
                     cultivo2 = pollo
                 elif cultivo_opcion == '3':
                     cultivo2 = cerdo
-                elif cultivo_opcion == '4':
-                    cultivo2 = conejo
-                elif cultivo_opcion == '5':
-                    cultivo2 = pato
                 else:
                     print('Opción no válida. Intente de nuevo.')
                     continue
@@ -802,19 +811,25 @@ while True:
                 columna2 = int(input('Ingrese la columna del animal a alimentar: ')) - 1
                 animal.regar(fila2, columna2)
                 tiempo.accionN()
-
+            
             elif opcio == '3':
+                fila2 = int(input('Ingrese la fila del animal a alimentar: ')) - 1
+                columna2 = int(input('Ingrese la columna del animal a alimentar: ')) - 1
+                animal.acariciar(fila2, columna2)
+                tiempo.accionN()
+
+            elif opcio == '4':
                 fila2 = int(input('Ingrese la fila para cosechar: ')) - 1
                 columna2 = int(input('Ingrese la columna para cosechar: ')) - 1
                 animal.cosechar_cultivo2(fila2, columna2)
                 tiempo.accionN()
 
-            elif opcio == '4':
+            elif opcio == '5':
                 tiempo.accionN()
                 tiempo.seguir_tiempo()
                 animal.mostrar_terreno()
 
-            elif opcio == '5':
+            elif opcio == '6':
                 break
             else:
                 print('Opción no válida. Intente de nuevo.')
